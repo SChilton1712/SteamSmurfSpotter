@@ -52,7 +52,7 @@ app.post
 				
 				if (visibilityState == 3)
 				{
-					outputs.push('This profile is set to public.');
+					outputs.push('This profile is set to public' + `<br>`);
 					
 					var gamesScore = -1;
 					var playtimeScore = -1;
@@ -91,12 +91,12 @@ app.post
 						outputs.push('Total playtime: ' + totalPlaytime);
 						outputs.push('Average playtime: ' + averagePlaytime + ' hours');
 						
-						outputs.push(`<br>` + 'Games score: ' + gamesScore);
-						outputs.push('Playtime score: ' + playtimeScore + `<br>`);
+						outputs.push(`<br>` + 'Games score: ' + gamesScore + '%');
+						outputs.push('Playtime score: ' + playtimeScore + '%' + `<br>`);
 					}
 					catch (error)
 					{
-						outputs.push('Games list set to private');
+						outputs.push('Games list set to private' + `<br>`);
 						console.log('Games list set to private');
 					}
 					
@@ -107,19 +107,24 @@ app.post
 					{
 						const friendsList = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${apiKey}&steamid=${steamID}&relationship=friend`);
 						
-						// # todo add friends eval
 						var friendsCount = friendsList.data.friendslist.friends.length;
 						
-						console.log('Friend count: ' + friendsCount);
-						outputs.push('Friend count: ' + friendsCount);
+						friendsScore = 75 - (5 * friendsCount);
+						if (friendsScore > 95) { friendsScore = 95; }
+						else if (friendsScore < 5) { friendsScore = 5; }
 						
-						outputs.push(`<br>` + 'Friends score: ' + friendsScore + `<br>`);
+						console.log('Friend count: ' + friendsCount);
+						outputs.push('Friend count: ' + friendsCount + `<br>`);
+						
+						outputs.push('\nFriends score: ' + friendsScore + '%' + `<br>`);
 					}
 					catch (error)
 					{
-						outputs.push('Friends list set to private');
+						outputs.push('Friends list set to private' + `<br>`);
 						console.log('Friends list set to private');
 					}
+					
+					var createdScore = -1;
 					
 					// getting creation date
 					try
@@ -127,18 +132,56 @@ app.post
 						var unixTimeCreated = playerData.timecreated;
 						var dateTimeCreated = new Date(unixTimeCreated * 1000);
 						
-						outputs.push('Account created on: ' + dateTimeCreated);
+						createdScore = 2628288 / (unixTimeCreated);
+						
+						if (createdScore > 95) { createdScore = 95; }
+						else if (createdScore < 5) { createdScore = 5; }
+						
+						outputs.push('Account created on: ' + dateTimeCreated + `<br>`);
+						outputs.push('Creation score: ' + createdScore + '%' + `<br>`);
 					}
 					catch (error)
 					{
-						outputs.push('Account creation date set to private');
+						outputs.push('Account creation date set to private' + `<br>`);
 						console.log('Account creation date set to private');
 					}
+					
+					var finalScore = 0;
+					var scoresUsed = 0;
+					
+					if (gamesScore > -1)
+					{
+						finalScore += gamesScore;
+						scoresUsed++;
+					}
+					if (playtimeScore > -1)
+					{
+						finalScore += playtimeScore;
+						scoresUsed++;
+					}
+					if (friendsScore > -1)
+					{
+						finalScore += friendsScore;
+						scoresUsed++;
+					}
+					if (createdScore > -1)
+					{
+						finalScore += createdScore;
+						scoresUsed++;
+					}
+					
+					finalScore /= scoresUsed;
+					
+					if (finalScore > 95) { finalScore = 95; }
+					else if (finalScore < 5) { finalScore = 5; }
+					
+					outputs.push(`<h2>Final score: ${finalScore}%</h2>`);
+					console.log('Final score: ' + finalScore);
 				}
 				else
 				{
-					outputs.push('This profile is set to private or friends only.');
-					outputs.push('Further data is unavailable.');
+					outputs.push('This profile is set to private or friends only');
+					outputs.push('Further data is unavailable');
 				}
 				
 				// Outputs all messages above
