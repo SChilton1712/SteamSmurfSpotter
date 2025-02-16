@@ -1,211 +1,106 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
 const axios = require('axios');
-const currentPort = 3000;
+require('dotenv').config();
+
+const app = express();
+const PORT = 3000;
+const API_KEY = process.env.STEAM_API_KEY;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public')); // Serve static files from 'public' directory
 
-// Runs on start, instantiates text input box and submit button for SteamID
-app.get
-(
-	'/', (req, res) =>
-	{
-		res.send
-		(
-			`<form method="POST" action="/submit">
-				<input type="text" name="steamID" placeholder="Enter Steam ID here..." required>
-				<button type"submit">Submit</button>
-			</form>`
-		);
-	}
-);
+app.get('/', (req, res) => {
+	res.redirect('/index.html'); // Redirect to the correct file
+});
 
-// Runs when user presses submit after entering SteamID
-app.post
-(
-	'/submit', async (req, res) =>
-	{
-		const steamID = req.body.steamID; // Steam ID pulled from text input box
-		const apiKey = '5146BE01C762080D70CBEFF7E003EBB4' // My API key
-		
-		// Uses Axios to pull player info from Steam
-		try
-		{
-			const axiosResponse = await axios.get(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamID}`); // Gets player data from Steam
-			const playerData = axiosResponse.data.response.players[0]; // Gets data from Steam's response
-			let outputs = [];
-			
-			if (playerData)
-			{
-				var visibilityState = playerData.communityvisibilitystate;
-				
-				// Basic player data
-				outputs.push
-				(
-					`<h1>Player Info</h1>
-					<p>Display Name: ${playerData.personaname}</p>
-					<img src="${playerData.avatarmedium}" alt="AvatarPic"/>
-					<br>`
-				);
-				
-				if (visibilityState == 3)
-				{
-					outputs.push('This profile is set to public' + `<br>`);
-					
-					var gamesScore = -1;
-					var playtimeScore = -1;
-					
-					// getting total games and average play time
-					try 
-					{
-						const gamesList = await axios.get(`http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamID}&format=json`); // Gets owned games from Steam
-						
-						var totalGames = gamesList.data.response.game_count;
-						
-						var totalPlaytime = 0;
-						var averagePlaytime = 0;
-						for	(let index = 0; index < gamesList.data.response.games.length; index++)
-						{
-							totalPlaytime += gamesList.data.response.games[index].playtime_forever;
-						}
-						
-						totalPlaytime /= 60;
-						averagePlaytime = totalPlaytime / totalGames;
-						averagePlaytime = Math.round(averagePlaytime);
-						
-						gamesScore = -5 * totalGames + 100;
-						if (gamesScore > 95) { gamesScore = 95; }
-						else if (gamesScore < 5) { gamesScore = 5; }
-						
-						playtimeScore = (100 * averagePlaytime) / totalPlaytime;
-						if (playtimeScore > 95) { playtimeScore = 95; }
-						else if (playtimeScore < 5) { playtimeScore = 5; }
-						
-						console.log('Games owned: ' + totalGames);
-						console.log('Total playtime: ' + totalPlaytime);
-						console.log('Average playtime: ' + averagePlaytime);
-						
-						outputs.push('Games owned: ' + totalGames);
-						outputs.push('Total playtime: ' + totalPlaytime);
-						outputs.push('Average playtime: ' + averagePlaytime + ' hours');
-						
-						outputs.push(`<br>` + 'Games score: ' + gamesScore + '%');
-						outputs.push('Playtime score: ' + playtimeScore + '%' + `<br>`);
-					}
-					catch (error)
-					{
-						outputs.push('Games list set to private' + `<br>`);
-						console.log('Games list set to private');
-					}
-					
-					var friendsScore = -1;
-					
-					// getting friends list
-					try
-					{
-						const friendsList = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${apiKey}&steamid=${steamID}&relationship=friend`);
-						
-						var friendsCount = friendsList.data.friendslist.friends.length;
-						
-						friendsScore = 75 - (5 * friendsCount);
-						if (friendsScore > 95) { friendsScore = 95; }
-						else if (friendsScore < 5) { friendsScore = 5; }
-						
-						console.log('Friend count: ' + friendsCount);
-						outputs.push('Friend count: ' + friendsCount + `<br>`);
-						
-						outputs.push('\nFriends score: ' + friendsScore + '%' + `<br>`);
-					}
-					catch (error)
-					{
-						outputs.push('Friends list set to private' + `<br>`);
-						console.log('Friends list set to private');
-					}
-					
-					var createdScore = -1;
-					
-					// getting creation date
-					try
-					{
-						var unixTimeCreated = playerData.timecreated;
-						var dateTimeCreated = new Date(unixTimeCreated * 1000);
-						
-						createdScore = 2628288 / (unixTimeCreated);
-						
-						if (createdScore > 95) { createdScore = 95; }
-						else if (createdScore < 5) { createdScore = 5; }
-						
-						outputs.push('Account created on: ' + dateTimeCreated + `<br>`);
-						outputs.push('Creation score: ' + createdScore + '%' + `<br>`);
-					}
-					catch (error)
-					{
-						outputs.push('Account creation date set to private' + `<br>`);
-						console.log('Account creation date set to private');
-					}
-					
-					var finalScore = 0;
-					var scoresUsed = 0;
-					
-					if (gamesScore > -1)
-					{
-						finalScore += gamesScore;
-						scoresUsed++;
-					}
-					if (playtimeScore > -1)
-					{
-						finalScore += playtimeScore;
-						scoresUsed++;
-					}
-					if (friendsScore > -1)
-					{
-						finalScore += friendsScore;
-						scoresUsed++;
-					}
-					if (createdScore > -1)
-					{
-						finalScore += createdScore;
-						scoresUsed++;
-					}
-					
-					finalScore /= scoresUsed;
-					
-					if (finalScore > 95) { finalScore = 95; }
-					else if (finalScore < 5) { finalScore = 5; }
-					
-					outputs.push(`<h2>Final score: ${finalScore}%</h2>`);
-					console.log('Final score: ' + finalScore);
-				}
-				else
-				{
-					outputs.push('This profile is set to private or friends only');
-					outputs.push('Further data is unavailable');
-				}
-				
-				// Outputs all messages above
-				res.send(outputs.join(`<br>`));
-			}
-			else
-			{
-				// Runs if player was not found
-				res.send('Player not found.');
-			}
+
+// API to fetch Steam data as JSON
+app.post('/api/steam-data', async (req, res) => {
+	const steamID = req.body.steamID;
+	try {
+		const playerData = await getPlayerData(steamID);
+		if (!playerData) return res.json({ error: 'Player not found.' });
+
+		if (playerData.communityvisibilitystate !== 3) {
+			return res.json({ error: 'This profile is private or friends-only.' });
 		}
-		catch (error)
-		{
-			console.log(error);
-			res.send('An error occurred.');
-		}
-	}
-);
 
-// Runs at start, creates local server on currentPort
-app.listen
-(
-	currentPort, () =>
-	{
-		console.log(`Server running at http://localhost:${currentPort}/`);
+		const [gamesData, friendsData] = await Promise.all([
+			getOwnedGames(steamID),
+			getFriendsList(steamID)
+		]);
+
+		const finalScore = calculateFinalScore([gamesData?.score, friendsData?.score, playerData.createdScore]);
+
+		res.json({
+			personaname: playerData.personaname,
+			avatarmedium: playerData.avatarmedium,
+			creationDate: playerData.timecreated,
+			totalGames: gamesData?.totalGames || 0,
+			totalPlaytime: gamesData?.totalPlaytime || 0,
+			gamesScore: gamesData?.score || 0,
+			friendsCount: friendsData?.friendsCount || 0,
+			friendsScore: friendsData?.score || 0,
+			finalScore
+		});
+	} catch (error) {
+		console.error(error);
+		res.json({ error: 'An error occurred while fetching data.' });
 	}
-);
+});
+
+// Fetch player profile
+async function getPlayerData(steamID) {
+	try {
+		const response = await axios.get(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${API_KEY}&steamids=${steamID}`);
+		return response.data.response.players[0] || null;
+	} catch (error) {
+		console.error('Error fetching player data:', error);
+		return null;
+	}
+}
+
+// Fetch owned games
+async function getOwnedGames(steamID) {
+	try {
+		const response = await axios.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${API_KEY}&steamid=${steamID}&format=json`);
+		const games = response.data.response.games || [];
+		const totalGames = response.data.response.game_count || 0;
+		const totalPlaytime = games.reduce((sum, game) => sum + game.playtime_forever, 0) / 60;
+		const score = Math.max(5, Math.min(95, -5 * totalGames + 100));
+
+		return { totalGames, totalPlaytime, score };
+	} catch (error) {
+		console.error('Error fetching owned games:', error);
+		return null;
+	}
+}
+
+// Fetch friends list
+async function getFriendsList(steamID) {
+	try {
+		const response = await axios.get(`https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamID}&relationship=friend`);
+		const friendsCount = response.data.friendslist?.friends.length || 0;
+		const score = Math.max(5, Math.min(95, 75 - 5 * friendsCount));
+
+		return { friendsCount, score };
+	} catch (error) {
+		console.error('Error fetching friends list:', error);
+		return null;
+	}
+}
+
+// Calculate final score
+function calculateFinalScore(scores) {
+	const validScores = scores.filter(score => score !== undefined);
+	if (validScores.length === 0) return 'Insufficient data';
+
+	return Math.round(Math.max(5, Math.min(95, validScores.reduce((sum, score) => sum + score, 0) / validScores.length)));
+}
+
+// Start server
+app.listen(PORT, () => {
+	console.log(`Server running at http://localhost:${PORT}/`);
+});
