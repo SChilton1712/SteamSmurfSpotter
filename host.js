@@ -70,6 +70,8 @@ async function getOwnedGames(steamID) {
 		const totalGames = response.data.response.game_count || 0;
 		const totalPlaytime = games.reduce((sum, game) => sum + game.playtime_forever, 0) / 60;
 		const score = Math.max(5, Math.min(95, -5 * totalGames + 100));
+		
+		if (totalGames == 0) score = 0; // Fix for issue falsely reporting 95% scores for accounts with private games
 
 		return { totalGames, totalPlaytime, score };
 	} catch (error) {
