@@ -28,8 +28,8 @@ app.get('/', (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'your-email@gmail.com', // Replace with your Gmail address
-    pass: 'your-app-password' // Replace with your Gmail App Password
+    user: 'SmurfFinderCantactUs@gmail.com', 
+    pass: 'Password12345_'
   }
 });
 

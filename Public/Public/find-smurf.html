@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smurf Finder</title>
+  <!-- Bootstrap CSS must come before Tailwind to ensure proper navbar functionality -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #0a0a23 0%, #1e1e3f 100%);
+      color: #e5e7eb;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+      position: relative;
+    }
+
+    .night-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .night-mode .navbar,
+    .night-mode .footer {
+      background-color: #000 !important;
+    }
+
+    .night-mode .btn-primary {
+      background-color: #333;
+      border-color: #555;
+    }
+
+    .night-mode .btn-primary:hover {
+      background-color: #444;
+    }
+
+    .night-mode-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .search-section {
+      min-height: 100vh;
+      padding: 10rem 1rem 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-form-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-form {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-form input {
+      flex-grow: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      color: #1f2937;
+    }
+
+    .search-form input::placeholder {
+      color: #6b7280;
+    }
+
+    .search-form input:focus {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+
+    .search-form button {
+      padding: 0.75rem 1.5rem;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .search-form button:hover {
+      background: #1d4ed8;
+    }
+
+    .user-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(191, 110, 180, 0.1));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      width: 100%;
+      max-width: 400px;
+      margin: 2rem 0;
+    }
+
+    .user-card:hover {
+      transform: translateY(-10px) rotateX(5deg);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .analytics-dashboard {
+      max-width: 1400px;
+      width: 100%;
+      margin-top: 3rem;
+    }
+
+    .analytics-card {
+      background: transparent;
+      border: none;
+      text-align: center;
+      position: relative;
+      overflow: visible;
+      padding: 0;
+    }
+
+    .analytics-card .card-body {
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .analytics-card:hover .card-body {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .night-mode .analytics-card .card-body {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Hologram Effect for Charts */
+    .chart-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 1rem auto;
+      background: radial-gradient(circle at center, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: hologramPulse 3s infinite ease-in-out;
+      filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(0, 255, 255, 0.05), transparent);
+      opacity: 0.7;
+      animation: scanLine 4s infinite linear;
+      z-index: 0;
+    }
+
+    .chart-container canvas {
+      position: relative;
+      z-index: 1;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .chart-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      color: #00f6ff;
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+      margin-bottom: 0.5rem;
+    }
+
+    .chart-value {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #00f6ff;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+      animation: flicker 2s infinite;
+    }
+
+    .custom-tooltip {
+      background: rgba(0, 255, 255, 0.2);
+      border: 1px solid rgba(0, 255, 255, 0.5);
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      color: #ffffff;
+      font-size: 0.875rem;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    @keyframes hologramPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); }
+      50% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.5); }
+    }
+
+    @keyframes scanLine {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .loader {
+      border: 6px solid #e5e7eb;
+      border-top: 6px solid #6366f1;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .error-modal {
+      background: rgba(239, 68, 68, 0.95);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      color: #fff;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 400px;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #2d2d4a 25%, #3b3b5c 50%, #2d2d4a 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.2s infinite;
+      border-radius: 0.75rem;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .settings-panel {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .history-panel {
+      max-height: 300px;
+      overflow-y: auto;
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .history-item {
+      padding: 0.75rem;
+      cursor: pointer;
+      color: #e5e7eb;
+      border-radius: 0.5rem;
+    }
+
+    .history-item:hover {
+      background: rgba(99, 102, 241, 0.2);
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      z-index: 30;
+      display: none;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .navbar {
+      z-index: 2100;
+    }
+
+    .navbar-nav .nav-item .nav-link {
+      color: rgba(255,255,255,.55);
+      padding: 0.5rem 1rem;
+    }
+
+    .navbar-nav .nav-item .nav-link:hover {
+      color: rgba(255,255,255,.75);
+    }
+  </style>
+</head>
+<body>
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+
+  <!-- Fixed Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+        <img src="..\images\Eyetroller.jpg" alt="Logo" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"> Smurf Finder
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="howto.html">How it works</a></li>
+          <!--<li class="nav-item"><a class="nav-link" href="tools.html">Tools</a></li>-->
+          <li class="nav-item"><a class="nav-link" href="privacy.html">Privacy Policy</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Search Form (Simple, Google-like, Fixed) -->
+  <div class="search-form-container">
+    <form id="searchForm" class="search-form">
+      <input
+        type="text"
+        id="userIdInput"
+        placeholder="Search for a user ID..."
+        required
+        aria-label="User ID"
+      />
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <h1 class="text-5xl font-bold mb-10 text-center font-orbitron">Smurf Finder</h1>
+
+    <!-- Loader -->
+    <div id="loader" class="hidden mt-10">
+      <div class="loader"></div>
+      <p class="mt-3 text-gray-400">Analyzing data...</p>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="user-card-container hidden flex flex-col items-center w-full">
+      <!-- User Card -->
+      <div id="userCard" class="user-card p-8 text-center">
+        <img
+          id="avatar"
+          src=""
+          class="rounded-full w-28 h-28 mx-auto mb-6 border-4 border-indigo-600 shadow-xl transition-transform hover:scale-110"
+          alt="User Avatar"
+        />
+        <h5 id="username" class="text-2xl font-semibold text-white font-orbitron"></h5>
+        <div class="mt-4 space-y-3">
+          <p class="text-gray-300"><strong>Account Created:</strong> <span id="creationDate"></span></p>
+          <p class="text-gray-300 relative" data-tooltip="Number of games owned">
+            <strong>Total Games:</strong> <span id="totalGames"></span>
+            <span class="tooltip"></span>
+          </p>
+          <p class="text-gray-300 relative" data-tooltip="Total hours played">
+            <strong>Total Playtime:</strong> <span id="totalPlaytime"></span> hrs
+            <span class="tooltip"></span>
+          </p>
+          <p class="text-gray-300 relative" data-tooltip="Score based on game activity">
+            <strong>Game Score:</strong> <span id="gamesScore"></span>
+            <span class="tooltip"></span>
+          </p>
+          <p class="text-gray-300 relative" data-tooltip="Score based on friend network">
+            <strong>Friend Score:</strong> <span id="friendsScore"></span>
+            <span class="tooltip"></span>
+          </p>
+          <p class="text-gray-300 relative" data-tooltip="Likelihood of being a smurf account">
+            <strong>Final Smurf Score:</strong> <span id="finalScore" class="font-bold text-yellow-400"></span>
+            <span class="tooltip"></span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Search History -->
+      <div id="searchHistory" class="history-panel hidden">
+        <h3 class="text-lg font-semibold text-gray-200 mb-2">Recent Searches</h3>
+        <div id="historyItems"></div>
+      </div>
+
+      <!-- Analytics Dashboard -->
+      <div class="analytics-dashboard row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col">
+          <div class="analytics-card card h-100">
+            <div class="card-body">
+              <h5 class="chart-title">Total Games</h5>
+              <div class="chart-container">
+                <canvas id="totalGamesChart"></canvas>
+              </div>
+              <p class="chart-value" id="totalGamesValue"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="analytics-card card h-100">
+            <div class="card-body">
+              <h5 class="chart-title">Total Playtime (hrs)</h5>
+              <div class="chart-container">
+                <canvas id="totalPlaytimeChart"></canvas>
+              </div>
+              <p class="chart-value" id="totalPlaytimeValue"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="analytics-card card h-100">
+            <div class="card-body">
+              <h5 class="chart-title">Game Score</h5>
+              <div class="chart-container">
+                <canvas id="gamesScoreChart"></canvas>
+              </div>
+              <p class="chart-value" id="gamesScoreValue"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="analytics-card card h-100">
+            <div class="card-body">
+              <h5 class="chart-title">Friend Score</h5>
+              <div class="chart-container">
+                <canvas id="friendsScoreChart"></canvas>
+              </div>
+              <p class="chart-value" id="friendsScoreValue"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="analytics-card card h-100">
+            <div class="card-body">
+              <h5 class="chart-title">Smurf Score</h5>
+              <div class="chart-container">
+                <canvas id="finalScoreChart"></canvas>
+              </div>
+              <p class="chart-value" id="finalScoreValue"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Night Mode Toggle -->
+  <button id="toggle-dark-mode" class="night-mode-btn bg-gray-800 text-white p-3 rounded-full hover:bg-gray-700 transition" onclick="SmurfFinderApp.toggleNightMode()">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+    </svg>
+  </button>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white pt-5 pb-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <img src="images\Smurffinder.png" alt="Logo" style="max-width: 150px; border-radius: 50%; object-fit: cover;">
+            <p>Protecting your games from unfair play — one smurf at a time.</p>
+          </div>
+          <div class="col-md-2 mb-3">
+            <h5>Site</h5>
+            <ul class="list-unstyled">
+              <li><a href="index.html" class="text-white">Home</a></li>
+              <li><a href="howto.html" class="text-white">How it works</a></li>
+              <li><a href="privacy.html" class="text-white">Privacy Policies</a></li>
+              <li><a href="contact.html" class="text-white">Contact Us</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-3">
+            <h5>Legal</h5>
+            <p><a href="gdpr.html" class="text-white">GDPR Compliance</a></p>
+            <p><a href="terms.html" class="text-white">Terms & Conditions</a></p>
+          </div>
+          <div class="col-md-3 mb-3 text-center">
+            <p>&copy; 2025 Smurf Finder. All Rights Reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  <!-- Settings Panel -->
+  <div id="settingsPanel" class="settings-panel">
+    <h3 class="text-lg font-semibold text-gray-200 mb-3">Settings</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="text-gray-300">Chart Type</label>
+        <select id="chartType" class="block w-full p-2 bg-gray-800 text-white rounded-lg">
+          <option value="doughnut">Doughnut</option>
+          <option value="bar">Bar</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-gray-300">Theme Intensity</label>
+        <select id="themeIntensity" class="block w-full p-2 bg-gray-800 text-white rounded-lg">
+          <option value="light">Light</option>
+          <option value="medium">Medium</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+      <button id="closeSettings" class="btn-primary w-full p-2 rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="error-modal hidden">
+    <p id="errorMessage"></p>
+    <button id="retryButton" class="btn-primary mt-2 px-4 py-1 rounded-lg">Retry</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+  <script>
+    /**
+     * Smurf Finder Application
+     * Main class to manage UI, API interactions, and state
+     */
+    class SmurfFinderApp {
+      constructor() {
+        this.charts = {};
+        this.state = {
+          isNightMode: localStorage.getItem('nightMode') === 'on',
+          chartType: localStorage.getItem('chartType') || 'doughnut',
+          themeIntensity: localStorage.getItem('themeIntensity') || 'medium',
+          searchHistory: JSON.parse(localStorage.getItem('searchHistory')) || [],
+          lastSearch: null
+        };
+        this.init();
+      }
+
+      /**
+       * Initialize the application
+       */
+      init() {
+        this.bindEvents();
+        this.initParticles();
+        this.applyTheme();
+        this.renderSearchHistory();
+      }
+
+      /**
+       * Bind event listeners
+       */
+      bindEvents() {
+        document.getElementById('searchForm').addEventListener('submit', (e) => this.handleSearchSubmit(e));
+        document.getElementById('chartType').addEventListener('change', (e) => this.updateChartType(e.target.value));
+        document.getElementById('themeIntensity').addEventListener('change', (e) => this.updateThemeIntensity(e.target.value));
+        document.getElementById('closeSettings').addEventListener('click', () => this.toggleSettingsPanel());
+        document.getElementById('retryButton').addEventListener('click', () => this.retryLastSearch());
+        document.addEventListener('mouseover', (e) => this.handleTooltip(e));
+        document.addEventListener('mouseout', (e) => this.hideTooltip(e));
+        document.getElementById('searchHistory').addEventListener('click', (e) => this.handleHistoryClick(e));
+      }
+
+      /**
+       * Initialize particle background
+       */
+      initParticles() {
+        tsParticles.load('particles-js', {
+          particles: {
+            number: { value: 50 },
+            color: { value: ['#6366f1', '#10b981', '#f59e0b'] },
+            shape: { type: 'circle' },
+            opacity: { value: 0.5 },
+            size: { value: 3 },
+            move: { enable: true, speed: 0.5 }
+          }
+        });
+      }
+
+      /**
+       * Apply theme based on state
+       */
+      applyTheme() {
+        if (this.state.isNightMode) {
+          document.body.classList.add('night-mode');
+          document.body.style.background = this.getThemeBackground();
+        }
+      }
+
+      /**
+       * Get background based on theme intensity
+       */
+      getThemeBackground() {
+        switch (this.state.themeIntensity) {
+          case 'light': return 'linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 100%)';
+          case 'medium': return 'linear-gradient(180deg, #121212 0%, #1e1e3f 100%)';
+          case 'dark': return 'linear-gradient(180deg, #0a0a23 0%, #1a1a1a 100%)';
+          default: return 'linear-gradient(180deg, #121212 0%, #1e1e3f 100%)';
+        }
+      }
+
+      /**
+       * Toggle night mode
+       */
+      static toggleNightMode() {
+        const app = SmurfFinderApp.instance;
+        app.state.isNightMode = !app.state.isNightMode;
+        localStorage.setItem('nightMode', app.state.isNightMode ? 'on' : 'off');
+        document.body.classList.toggle('night-mode');
+        document.body.style.background = app.getThemeBackground();
+        app.updateCharts();
+      }
+
+      /**
+       * Toggle settings panel
+       */
+      toggleSettingsPanel() {
+        const panel = document.getElementById('settingsPanel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        gsap.fromTo(panel, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.4 });
+      }
+
+      /**
+       * Debounce utility
+       * @param {Function} func - Function to debounce
+       * @param {number} wait - Wait time in ms
+       */
+      debounce(func, wait) {
+        let timeout;
+        return (...args) => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      /**
+       * Handle search form submission
+       * @param {Event} e - Form submit event
+       */
+      async handleSearchSubmit(e) {
+        e.preventDefault();
+        const userId = document.getElementById('userIdInput').value.trim();
+        if (userId) {
+          this.state.lastSearch = userId;
+          await this.performSearch(userId);
+        }
+      }
+
+      /**
+       * Perform search
+       * @param {string} userId - User ID to search
+       */
+      async performSearch(userId) {
+        const loader = document.getElementById('loader');
+        const results = document.getElementById('results');
+        const userCard = document.getElementById('userCard');
+
+        loader.classList.remove('hidden');
+        results.classList.add('hidden');
+        userCard.classList.add('skeleton');
+
+        // Destroy existing charts
+        Object.values(this.charts).forEach(chart => chart.destroy());
+        this.charts = {};
+
+        try {
+          const response = await fetch('/api/steam-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ steamID: userId })
+          });
+          const data = await response.json();
+
+          loader.classList.add('hidden');
+          userCard.classList.remove('skeleton');
+
+          if (data.error) {
+            this.showError(`Error: ${data.error}`);
+            return;
+          }
+
+          // Update User Card
+          document.getElementById('avatar').src = data.avatarmedium;
+          document.getElementById('username').textContent = data.personaname;
+          document.getElementById('creationDate').textContent = new Date(data.creationDate * 1000).toLocaleDateString();
+          document.getElementById('totalGames').textContent = data.totalGames;
+          document.getElementById('totalPlaytime').textContent = data.totalPlaytime;
+          document.getElementById('gamesScore').textContent = data.gamesScore;
+          document.getElementById('friendsScore').textContent = data.friendsScore;
+          document.getElementById('finalScore').textContent = data.finalScore;
+
+          // Update Search History
+          this.updateSearchHistory(userId);
+          this.renderSearchHistory();
+
+          // Update Dashboard
+          results.classList.remove('hidden');
+          gsap.from('.analytics-card', { opacity: 0, y: 30, stagger: 0.15, duration: 0.6 });
+
+          // Normalize values for charts
+          const totalGamesNorm = Math.min((data.totalGames / 500) * 100, 100);
+          const totalPlaytimeNorm = Math.min((data.totalPlaytime / 1000) * 100, 100);
+          const gamesScoreNorm = Math.min(data.gamesScore, 100);
+          const friendsScoreNorm = Math.min(data.friendsScore, 100);
+          const finalScoreNorm = Math.min(data.finalScore, 100);
+
+          // Create charts
+          this.charts.totalGames = this.createChart('totalGamesChart', totalGamesNorm, 100, 'Total Games');
+          this.charts.totalPlaytime = this.createChart('totalPlaytimeChart', totalPlaytimeNorm, 100, 'Total Playtime');
+          this.charts.gamesScore = this.createChart('gamesScoreChart', gamesScoreNorm, 100, 'Game Score');
+          this.charts.friendsScore = this.createChart('friendsScoreChart', friendsScoreNorm, 100, 'Friend Score');
+          this.charts.finalScore = this.createChart('finalScoreChart', finalScoreNorm, 100, 'Smurf Score');
+
+          // Update text values
+          document.getElementById('totalGamesValue').textContent = data.totalGames;
+          document.getElementById('totalPlaytimeValue').textContent = `${data.totalPlaytime} hrs`;
+          document.getElementById('gamesScoreValue').textContent = data.gamesScore;
+          document.getElementById('friendsScoreValue').textContent = data.friendsScore;
+          document.getElementById('finalScoreValue').textContent = data.finalScore;
+        } catch (error) {
+          loader.classList.add('hidden');
+          this.showError('Failed to fetch data. Please try again.');
+        }
+      }
+
+      /**
+       * Create chart
+       * @param {string} id - Canvas ID
+       * @param {number} value - Chart value
+       * @param {number} max - Max value
+       * @param {string} label - Chart label
+       */
+      createChart(id, value, max, label) {
+        const ctx = document.getElementById(id).getContext('2d');
+        const isNightMode = this.state.isNightMode;
+        let gradient;
+        switch (label) {
+          case 'Total Games':
+            gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#00f6ff');
+            gradient.addColorStop(1, '#0097a7');
+            break;
+          case 'Total Playtime':
+            gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#00f6ff');
+            gradient.addColorStop(1, '#26c6da');
+            break;
+          case 'Game Score':
+            gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#00f6ff');
+            gradient.addColorStop(1, '#4dd0e1');
+            break;
+          case 'Friend Score':
+            gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#00f6ff');
+            gradient.addColorStop(1, '#80deea');
+            break;
+          case 'Smurf Score':
+            gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#00f6ff');
+            gradient.addColorStop(1, '#b2ebf2');
+            break;
+          default:
+            gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, '#00f6ff');
+            gradient.addColorStop(1, '#0097a7');
+        }
+
+        return new Chart(ctx, {
+          type: this.state.chartType,
+          data: {
+            labels: [label, 'Remaining'],
+            datasets: [{
+              data: [value, max - value],
+              backgroundColor: [gradient, 'rgba(0, 255, 255, 0.1)'],
+              borderColor: 'rgba(0, 255, 255, 0.3)',
+              borderWidth: 1,
+              hoverOffset: this.state.chartType === 'doughnut' ? 20 : 0,
+              borderRadius: this.state.chartType === 'bar' ? 6 : 0
+            }]
+          },
+          options: {
+            cutout: this.state.chartType === 'doughnut' ? '65%' : 0,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                enabled: true,
+                backgroundColor: 'transparent',
+                padding: 0,
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.raw || 0;
+                    return `${label}: ${value.toFixed(1)}%`;
+                  }
+                },
+                external: function(context) {
+                  const tooltip = context.tooltip;
+                  let tooltipEl = document.getElementById('chartjs-tooltip');
+                  if (!tooltipEl) {
+                    tooltipEl = document.createElement('div');
+                    tooltipEl.id = 'chartjs-tooltip';
+                    tooltipEl.className = 'custom-tooltip';
+                    document.body.appendChild(tooltipEl);
+                  }
+                  if (tooltip.opacity === 0) {
+                    tooltipEl.style.opacity = 0;
+                    return;
+                  }
+                  tooltipEl.innerHTML = `<div>${tooltip.body[0].lines[0]}</div>`;
+                  tooltipEl.style.opacity = 1;
+                  tooltipEl.style.left = `${tooltip.x + 10}px`;
+                  tooltipEl.style.top = `${tooltip.y + 10}px`;
+                }
+              }
+            },
+            animation: {
+              duration: 1500,
+              easing: 'easeOutQuad',
+              animateRotate: true,
+              animateScale: true
+            },
+            scales: this.state.chartType === 'bar' ? {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                grid: { display: false },
+                ticks: {
+                  color: '#00f6ff',
+                  font: { family: 'Inter', size: 10 },
+                  textShadow: '0 0 5px rgba(0, 255, 255, 0.5)'
+                }
+              },
+              x: {
+                grid: { display: false },
+                ticks: {
+                  color: '#00f6ff',
+                  font: { family: 'Inter', size: 10 },
+                  textShadow: '0 0 5px rgba(0, 255, 255, 0.5)'
+                }
+              }
+            } : {},
+            elements: {
+              arc: {
+                borderWidth: 1,
+                borderColor: 'rgba(0, 255, 255, 0.3)'
+              }
+            },
+            maintainAspectRatio: true,
+            responsive: true
+          }
+        });
+      }
+
+      /**
+       * Update chart type
+       * @param {string} type - Chart type (doughnut/bar)
+       */
+      updateChartType(type) {
+        this.state.chartType = type;
+        localStorage.setItem('chartType', type);
+        this.updateCharts();
+      }
+
+      /**
+       * Update theme intensity
+       * @param {string} intensity - Theme intensity (light/medium/dark)
+       */
+      updateThemeIntensity(intensity) {
+        this.state.themeIntensity = intensity;
+        localStorage.setItem('themeIntensity', intensity);
+        document.body.style.background = this.getThemeBackground();
+        this.updateCharts();
+      }
+
+      /**
+       * Update charts with current theme
+       */
+      updateCharts() {
+        Object.values(this.charts).forEach(chart => {
+          if (chart) {
+            const isNightMode = this.state.isNightMode;
+            chart.data.datasets[0].backgroundColor[1] = 'rgba(0, 255, 255, 0.1)';
+            chart.data.datasets[0].borderColor = 'rgba(0, 255, 255, 0.3)';
+            chart.options.scales.y.ticks.color = '#00f6ff';
+            chart.options.scales.x.ticks.color = '#00f6ff';
+            chart.update();
+          }
+        });
+      }
+
+      /**
+       * Update search history
+       * @param {string} userId - User ID
+       */
+      updateSearchHistory(userId) {
+        if (!this.state.searchHistory.includes(userId)) {
+          this.state.searchHistory.unshift(userId);
+          if (this.state.searchHistory.length > 5) {
+            this.state.searchHistory.pop();
+          }
+          localStorage.setItem('searchHistory', JSON.stringify(this.state.searchHistory));
+        }
+      }
+
+      /**
+       * Render search history
+       */
+      renderSearchHistory() {
+        const historyContainer = document.getElementById('historyItems');
+        const historyPanel = document.getElementById('searchHistory');
+        if (this.state.searchHistory.length > 0) {
+          historyPanel.classList.remove('hidden');
+          historyContainer.innerHTML = this.state.searchHistory.map(id => `
+            <div class="history-item" data-id="${id}">${id}</div>
+          `).join('');
+        } else {
+          historyPanel.classList.add('hidden');
+        }
+      }
+
+      /**
+       * Handle history click
+       * @param {Event} e - Click event
+       */
+      handleHistoryClick(e) {
+        const item = e.target.closest('.history-item');
+        if (item) {
+          const userId = item.dataset.id;
+          document.getElementById('userIdInput').value = userId;
+          this.performSearch(userId);
+        }
+      }
+
+      /**
+       * Retry last search
+       */
+      retryLastSearch() {
+        if (this.state.lastSearch) {
+          this.performSearch(this.state.lastSearch);
+        }
+      }
+
+      /**
+       * Show error message
+       * @param {string} message - Error message
+       */
+      showError(message) {
+        const errorModal = document.getElementById('errorModal');
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+        errorModal.classList.remove('hidden');
+        gsap.from(errorModal, { opacity: 0, y: -30, duration: 0.4 });
+        setTimeout(() => {
+          errorModal.classList.add('hidden');
+        }, 5000);
+      }
+
+      /**
+       * Handle tooltip show
+       * @param {Event} e - Mouseover event
+       */
+      handleTooltip(e) {
+        const target = e.target.closest('[data-tooltip]');
+        if (target) {
+          const tooltip = target.querySelector('.tooltip');
+          tooltip.textContent = target.dataset.tooltip;
+          tooltip.style.display = 'block';
+          tooltip.style.left = `${e.clientX + 10}px`;
+          tooltip.style.top = `${e.clientY + 10}px`;
+        }
+      }
+
+      /**
+       * Hide tooltip
+       * @param {Event} e - Mouseout event
+       */
+      hideTooltip(e) {
+        const target = e.target.closest('[data-tooltip]');
+        if (target) {
+          const tooltip = target.querySelector('.tooltip');
+          tooltip.style.display = 'none';
+        }
+      }
+    }
+
+    // Store instance for static method
+    SmurfFinderApp.instance = new SmurfFinderApp();
+  </script>
+</body>
+</html>

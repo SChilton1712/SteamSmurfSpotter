@@ -8,14 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
   
   <style>
-    body {
-      font-family: 'Orbitron', sans-serif;
-      transition: background-color 0.3s, color 0.3s;
-      position: relative;
-      background: #ffffff; /* White base for light mode */
-      overflow-x: hidden; 
-    }
-
 
     /*foot*/
     .footer {
@@ -26,6 +18,14 @@
       padding: 1rem 2rem; /* Add padding to adjust the space inside */
       margin-left: auto;
       margin-right: auto;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      position: relative;
+      background: #ffffff; /* White base for light mode */
+      overflow-x: hidden; /* Allow vertical scrollbar, prevent horizontal */
     }
 
     /* Light mode dynamic background - Glowing particle effect */
@@ -197,83 +197,123 @@
       </div>
     </nav>
 
-<!-- Terms and Conditions Content -->
+<!-- GDPR Compliance Content -->
 <div class="container py-5">
-    <h1 class="mb-4">Terms and Conditions</h1>
+    <h1 class="mb-4">GDPR Compliance</h1>
     <p><em>Last Updated: May 5, 2025</em></p>
     <p>
-      These Terms and Conditions (“Terms”) govern your access to and use of the Smurf Finder website and services. By using our site, you agree to comply with and be bound by these Terms. If you do not agree with any part of these Terms, please refrain from using the service.
+      Smurf Finder is committed to protecting the personal data and privacy of its users in full compliance with the General Data Protection Regulation (GDPR) (EU) 2016/679. This GDPR Compliance Statement outlines how we handle, store, and process your data when you interact with our platform and services—especially those involving Steam account lookups and smurf detection functionality.
     </p>
   
-    <h2>1. Service Overview</h2>
+    <h2>1. Purpose of Data Processing</h2>
     <p>
-      Smurf Finder provides a free and educational tool designed to detect potential "smurf" accounts on the Steam platform. This is done by analyzing publicly available data from the Steam Web API. The platform is intended for community use and is not affiliated with Valve Corporation or Steam.
+      The main function of Smurf Finder is to help players and the community detect potential "smurf" accounts on Steam. A smurf account is typically a low-level or secondary account used by a highly-skilled player to play against less experienced opponents.
     </p>
-  
-    <h2>2. User Eligibility</h2>
     <p>
-      You must be at least 13 years old to use this site. By using Smurf Finder, you represent and warrant that you meet this age requirement.
+      To support this functionality, we collect limited data from the Steam Web API (which only provides public information). This includes:
     </p>
-  
-    <h2>3. Acceptable Use</h2>
-    <p>By using Smurf Finder, you agree not to:</p>
     <ul>
-      <li>Use the service for illegal, harassing, or abusive purposes</li>
-      <li>Reverse-engineer, copy, or reproduce any part of the site without permission</li>
-      <li>Use automated tools (bots, scrapers) without explicit authorization</li>
-      <li>Falsely represent or impersonate another user or Steam account</li>
-      <li>Attempt to access restricted areas of the service or interfere with its operation</li>
+      <li>Steam ID</li>
+      <li>Publicly available profile information (e.g., playtime, games owned, VAC bans)</li>
+      <li>Recent match data, if public</li>
+    </ul>
+    <p>
+      We do <strong>not</strong> collect sensitive personal data, private Steam account information, passwords, payment details, or any user-identifiable data beyond what is already made public through Steam.
+    </p>
+  
+    <h2>2. Legal Basis for Processing</h2>
+    <p>
+      Under Article 6 of the GDPR, our legal bases for processing user data include:
+    </p>
+    <ul>
+      <li><strong>Consent:</strong> When you accept cookies or initiate a search using our smurf detection feature.</li>
+      <li><strong>Legitimate Interest:</strong> For maintaining a fair and competitive gaming environment by enabling smurf detection based on publicly available information.</li>
+      <li><strong>Performance of a Contract:</strong> When you use our tool to search for smurfs, we process the necessary data to provide you with the results.</li>
     </ul>
   
-    <h2>4. Data and Privacy</h2>
+    <h2>3. Data Collection & Minimization</h2>
     <p>
-      By using the site, you acknowledge that Smurf Finder processes publicly available data from the Steam Web API. We do not access private account information. For full details on how we handle data, please refer to our <a href="/privacy-policy.html">Privacy Policy</a> and <a href="/gdpr-compliance.html">GDPR Compliance</a> pages.
+      We collect only the data that is necessary to deliver our smurf detection functionality. This may include:
+    </p>
+    <ul>
+      <li>IP address (used temporarily for session management and analytics)</li>
+      <li>Steam ID and associated public data</li>
+      <li>Basic browser/device metadata for security auditing (e.g., browser type, operating system)</li>
+    </ul>
+    <p>
+      No personal data is collected unless it is either publicly available or explicitly provided by the user.
     </p>
   
-    <h2>5. Intellectual Property</h2>
+    <h2>4. Data Subject Rights</h2>
     <p>
-      All content, code, branding, logos, and trademarks on this website are the property of Smurf Finder unless otherwise stated. You may not reuse, modify, or redistribute any part of the site without prior written consent.
+      Under GDPR, you have the following rights:
+    </p>
+    <ul>
+      <li><strong>Right to Access:</strong> You may request a copy of the data we hold about you.</li>
+      <li><strong>Right to Rectification:</strong> You may request correction of any inaccurate data.</li>
+      <li><strong>Right to Erasure:</strong> You may ask us to delete any personal data we hold, including Steam-related lookup records associated with your Steam ID.</li>
+      <li><strong>Right to Restrict Processing:</strong> You may request limitations on how we process your data.</li>
+      <li><strong>Right to Object:</strong> You may object to data processing carried out under legitimate interest.</li>
+      <li><strong>Right to Data Portability:</strong> You may request a copy of your data in a commonly used format.</li>
+      <li><strong>Right to Withdraw Consent:</strong> If our processing relies on your consent, you may withdraw it at any time.</li>
+    </ul>
+    <p>
+      To exercise any of these rights, email us at <a href="mailto:SmurfFinderContactUs@gmail.com">SmurfFinderContactUs@gmail.com</a>.
     </p>
   
-    <h2>6. Disclaimers</h2>
+    <h2>5. Cookies and Consent</h2>
     <p>
-      Smurf Finder is provided “as is” and for informational purposes only. We make no warranties about the accuracy, reliability, or completeness of the results produced by our smurf detection algorithm. Determining whether an account is a smurf is subjective and based on heuristics; results should not be taken as definitive evidence.
+      Smurf Finder uses cookies to improve user experience and collect anonymized analytics. You will be asked for consent before any non-essential cookies are stored. Cookies are used for:
+    </p>
+    <ul>
+      <li>Session management and preferences</li>
+      <li>Traffic analytics (e.g., page views and feature usage)</li>
+      <li>Security (e.g., rate limiting and abuse detection)</li>
+    </ul>
+    <p>
+      You can adjust cookie preferences at any time through your browser or our on-site cookie settings popup.
     </p>
   
-    <h2>7. Limitation of Liability</h2>
+    <h2>6. Data Retention Policy</h2>
     <p>
-      To the fullest extent permitted by law, Smurf Finder will not be liable for any direct, indirect, incidental, or consequential damages resulting from the use—or inability to use—our services. This includes, but is not limited to, loss of data, loss of reputation, or account penalties on third-party platforms.
+      We retain data only for as long as necessary to fulfill its purpose. Lookup history and analytics logs are automatically deleted or anonymized after 30 days unless a legal or technical requirement dictates otherwise. If you request deletion of data associated with your Steam ID, it will be removed promptly from our systems.
     </p>
   
-    <h2>8. External Links</h2>
+    <h2>7. Security Measures</h2>
     <p>
-      Our site may contain links to third-party websites. We are not responsible for the content or privacy practices of external sites. Please review their terms and privacy policies separately.
+      We implement technical and organizational security measures such as:
+    </p>
+    <ul>
+      <li>Encrypted communications via HTTPS</li>
+      <li>Regular server security updates and patches</li>
+      <li>Rate-limiting and anti-bot protections</li>
+      <li>Role-based access controls on administrative systems</li>
+    </ul>
+  
+    <h2>8. Data Sharing and Transfers</h2>
+    <p>
+      Smurf Finder does not sell or commercially share personal data. We may share anonymized analytics with trusted service providers (e.g., hosting or analytics platforms) under data processing agreements compliant with GDPR.
+    </p>
+    <p>
+      If any data is transferred outside the EEA, we ensure legal safeguards such as Standard Contractual Clauses (SCCs) or rely on hosting providers with adequacy decisions from the EU.
     </p>
   
-    <h2>9. Changes to These Terms</h2>
+    <h2>9. Children’s Data</h2>
     <p>
-      We reserve the right to update or modify these Terms at any time without prior notice. Changes will be posted on this page with a new effective date. Continued use of the site after changes are posted constitutes acceptance of the revised Terms.
+      Smurf Finder is not intended for children under the age of 13. We do not knowingly collect data from minors. If you are a parent or guardian and believe your child has submitted data, please contact us immediately, and we will delete it.
     </p>
   
-    <h2>10. Termination</h2>
+    <h2>10. Contact and Complaints</h2>
     <p>
-      We reserve the right to suspend or terminate access to the site for users who violate these Terms or use the service in a harmful or abusive manner.
-    </p>
-  
-    <h2>11. Governing Law</h2>
-    <p>
-      These Terms are governed by and construed in accordance with the laws of the United Kingdom. Any disputes will be subject to the exclusive jurisdiction of UK courts.
-    </p>
-  
-    <h2>12. Contact Information</h2>
-    <p>
-      For questions, feedback, or legal inquiries related to these Terms, please contact us at:
+      If you have any concerns about your data or this policy, you can reach us at:
     </p>
     <address>
       Email: <a href="mailto:SmurfFinderContactUs@gmail.com">SmurfFinderContactUs@gmail.com</a>
     </address>
+    <p>
+      You also have the right to file a complaint with your national Data Protection Authority.
+    </p>
   </div>
-  
   
       <a href="index.html" class="btn btn-primary mt-4">Back to Home</a>
     </div>
@@ -306,7 +346,6 @@
       </div>
     </div>
   </footer>
-
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
