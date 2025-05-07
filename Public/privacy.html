@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy - Smurf Finder</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet"/>
+  
+  <style>
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      position: relative;
+      background: #ffffff; /* White base for light mode */
+      overflow-x: hidden; /* Allow vertical scrollbar, prevent horizontal */
+    }
+
+    /*foot*/
+    .footer {
+      padding: 1rem 2rem; /* Adjust values as needed */
+    }
+
+    .footer .container-fluid {
+      padding: 1rem 2rem; /* Add padding to adjust the space inside */
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+
+    /* Light mode dynamic background - Glowing particle effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(0, 255, 255, 0.2) 0%,
+        transparent 50%
+      );
+      background-size: 200% 200%;
+      animation: glowPulse 12s ease-in-out infinite;
+      z-index: -1;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="2" fill="rgba(255,255,255,0.6)"/></svg>') repeat;
+      background-size: 25px 25px;
+      animation: particleDrift 6s linear infinite;
+      z-index: -1;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Animations for light mode */
+    @keyframes glowPulse {
+      0% { background-position: 50% 50%; transform: scale(1); opacity: 0.3; }
+      50% { background-position: 50% 50%; transform: scale(1.2); opacity: 0.5; }
+      100% { background-position: 50% 50%; transform: scale(1); opacity: 0.3; }
+    }
+
+    @keyframes particleDrift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(12px, 12px); }
+    }
+
+    /* Night Mode Styles */
+    .night-mode {
+      background: #121212; /* Dark base for night mode */
+      color: #ffffff;
+    }
+
+    /* Night mode dynamic background - Neon wave effect */
+    .night-mode::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        45deg,
+        rgba(0, 255, 255, 0.2),
+        rgba(128, 0, 255, 0.2),
+        rgba(0, 255, 255, 0.2)
+      );
+      background-size: 400% 400%;
+      animation: neonWave 10s ease infinite;
+      z-index: -1;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .night-mode::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at 30% 70%,
+        rgba(0, 255, 255, 0.3) 0%,
+        transparent 20%
+      );
+      background-size: 300% 300%;
+      animation: neonGlow 8s ease-in-out infinite;
+      z-index: -1;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* Animations for night mode */
+    @keyframes neonWave {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes neonGlow {
+      0% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 0.3; }
+    }
+
+    .container {
+      max-width: 800px;
+      margin-top: 50px;
+    }
+
+    .btn-primary {
+      background-color: #4CAF50;
+      border-color: #4CAF50;
+    }
+
+    .btn-primary:hover {
+      background-color: #45a049;
+      border-color: #45a049;
+    }
+
+    /* Night Mode Button and Component Styles */
+    .night-mode .navbar,
+    .night-mode .footer {
+      background-color: #000 !important;
+    }
+
+    .night-mode .btn-primary {
+      background-color: #333;
+      border-color: #555;
+    }
+
+    .night-mode .btn-primary:hover {
+      background-color: #444;
+    }
+
+    #toggle-dark-mode {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+    <!-- Night Mode Toggle -->
+    <button id="toggle-dark-mode" class="btn btn-outline-light night-mode-btn" onclick="toggleNightMode()">🌙 Night Mode</button>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">
+          <img src="..\images\Eyetroller.jpg" alt="Logo" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"> Smurf Finder
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="howto.html">How it works</a></li>
+           <!-- <li class="nav-item"><a class="nav-link" href="tools.html">Tools</a></li>-->
+            <li class="nav-item"><a class="nav-link" href="privacy.html">Privacy Policy</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Privacy Policy Content -->
+    <div class="container py-5">
+      <h1 class="mb-4">Privacy Policy</h1>
+      <p><em>Last Updated: May 5, 2025</em></p>
+      <p>At Smurf Finder, your privacy is of utmost importance to us. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services. Please read this policy carefully to understand our views and practices regarding your personal data and how we will treat it.</p>
+
+      <h2>1. Information We Collect</h2>
+      <p>We may collect and process the following types of data:</p>
+      <ul>
+        <li><strong>Account Information:</strong> Such as your username, email address, or any information you voluntarily submit when interacting with features on our site.</li>
+        <li><strong>Steam ID and Public Game Data:</strong> When provided, we access your public Steam profile information through the Steam Web API.</li>
+        <li><strong>Technical Data:</strong> Includes IP address, browser type, device identifiers, operating system, referring URLs, and site interaction data.</li>
+        <li><strong>Cookies and Analytics:</strong> We use cookies and similar technologies to collect usage data, remember preferences, and improve performance.</li>
+      </ul>
+
+      <h2>2. How We Use Your Information</h2>
+      <p>Your data helps us to:</p>
+      <ul>
+        <li>Provide core functionality like smurf detection and Steam data lookups</li>
+        <li>Customize and enhance your user experience</li>
+        <li>Send important service-related communications</li>
+        <li>Monitor platform security and prevent misuse</li>
+        <li>Analyze site usage to improve features and content</li>
+      </ul>
+
+      <h2>3. Legal Basis for Processing</h2>
+      <p>We process your personal data based on one or more of the following legal bases:</p>
+      <ul>
+        <li>Your explicit consent (e.g., accepting cookies)</li>
+        <li>Performance of a contract (e.g., when you use our services)</li>
+        <li>Compliance with legal obligations</li>
+        <li>Our legitimate interests in maintaining and improving the site</li>
+      </ul>
+
+      <h2>4. Data Retention</h2>
+      <p>We retain your personal data only as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required or permitted by law. After this period, your data will be securely deleted or anonymized.</p>
+
+      <h2>5. Data Sharing</h2>
+      <p>We do not sell or rent your personal information. However, we may share data with:</p>
+      <ul>
+        <li>Trusted third-party service providers who help us operate the website and services (e.g., analytics, hosting)</li>
+        <li>Legal authorities if required to comply with applicable laws or legal processes</li>
+        <li>Successors in the event of a merger, acquisition, or business transfer</li>
+      </ul>
+
+      <h2>6. Cookies and Tracking Technologies</h2>
+      <p>Cookies help us understand how you use our website. We use both session and persistent cookies for functionality, preferences, and analytics. You can control or disable cookies through your browser settings, but some features may become unavailable.</p>
+
+      <h2>7. Your Rights</h2>
+      <p>You have rights under data protection laws, which include the right to:</p>
+      <ul>
+        <li>Access the personal data we hold about you</li>
+        <li>Request correction of any inaccurate data</li>
+        <li>Request deletion of your data</li>
+        <li>Object to or restrict processing</li>
+        <li>Withdraw consent at any time where applicable</li>
+        <li>Request a copy of your data in a portable format</li>
+      </ul>
+      <p>If you wish to exercise any of these rights, contact us at <a href="mailto:contact@smurffinder.com">contact@smurffinder.com</a>.</p>
+
+      <h2>8. Data Security</h2>
+      <p>We take data protection seriously. We use encryption, access controls, and secure communication protocols to safeguard your information. However, please be aware that no transmission over the internet is 100% secure.</p>
+
+      <h2>9. Children’s Privacy</h2>
+      <p>Our services are not intended for individuals under the age of 13. We do not knowingly collect personal data from children. If we learn that we have collected such data, we will delete it promptly.</p>
+
+      <h2>10. External Links</h2>
+      <p>Our website may contain links to other websites. We are not responsible for the privacy practices or content of external sites. Please review their privacy policies separately.</p>
+
+      <h2>11. Changes to This Policy</h2>
+      <p>We may revise this Privacy Policy from time to time. All updates will be posted on this page with a revised effective date. We encourage you to check this page periodically to stay informed.</p>
+
+      <h2>12. Contact Us</h2>
+      <p>If you have questions, concerns, or requests regarding your privacy or this policy, you can reach out to us via the details below:</p>
+      <address>
+        Email: <a href="mailto:SmurfFinderContactUs@gmail.com">SmurfFinderContactUs@gmail.com</a>
+      </address>
+
+      <a href="index.html" class="btn btn-primary mt-4">Back to Home</a>
+    </div>
+
+  <!-- Footer -->
+  <footer class="footer bg-dark text-white pt-5 pb-4">
+    <div class="flex">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <img src="images\Smurffinder.png" alt="Logo" style="max-width: 150px; border-radius: 50%; object-fit: cover;">
+          <p>Protecting your games from unfair play — one smurf at a time.</p>
+        </div>
+        <div class="col-md-2 mb-3">
+          <h5>Site</h5>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-white">Home</a></li>
+            <li><a href="howto.html" class="text-white">How it works</a></li>
+            <li><a href="privacy.html" class="text-white">Privacy Policies</a></li>
+            <li><a href="contact.html" class="text-white">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-3">
+          <h5>Legal</h5>
+          <p><a href="gdpr.html" class="text-white">GDPR Compliance</a></p>
+          <p><a href="terms.html" class="text-white">Terms & Conditions</a></p>
+        </div>
+        <div class="col-md-3 mb-3 text-center">
+          <p>&copy; 2025 Smurf Finder. All Rights Reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Night Mode Functionality -->
+    <script>
+      function toggleNightMode() {
+        document.body.classList.toggle("night-mode");
+        if (document.body.classList.contains("night-mode")) {
+          localStorage.setItem("nightMode", "on");
+        } else {
+          localStorage.setItem("nightMode", "off");
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("nightMode") === "on") {
+          document.body.classList.add("night-mode");
+        }
+      });
+    </script>
+</body>
+</html>
