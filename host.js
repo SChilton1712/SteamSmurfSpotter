@@ -4,15 +4,18 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-const PORT = 3000;
+const path = require('path');
+const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.STEAM_API_KEY;
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static('public')); // Serve static files from 'public' directory
 
 app.get('/', (req, res) => {
-	res.redirect('/index.html'); // Redirect to the correct file
+	res.sendFile(path.join(__dirname, 'public', 'index.html')); // Redirect to the correct file
 });
 
 
