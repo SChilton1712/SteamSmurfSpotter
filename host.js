@@ -55,7 +55,7 @@ app.post('/api/steam-data', async (req, res) => {
 		const scores = [
 			gamesData?.score,
 			friendsData?.score,
-			playerData.createdScore // You should ensure this is defined somewhere
+			playerData.createdScore
 		];
 
 		const availableMetrics = scores.filter(score => score !== undefined).length;
@@ -66,11 +66,11 @@ app.post('/api/steam-data', async (req, res) => {
 			personaname: playerData.personaname,
 			avatarmedium: playerData.avatarmedium,
 			creationDate: playerData.timecreated,
-			totalGames: gamesData?.totalGames || 0,
-			totalPlaytime: gamesData?.totalPlaytime || 0,
-			gamesScore: gamesData?.score || 0,
-			friendsCount: friendsData?.friendsCount || 0,
-			friendsScore: friendsData?.score || 0,
+			totalGames: gamesData?.totalGames || null,
+			totalPlaytime: gamesData?.totalPlaytime || null,
+			gamesScore: gamesData?.score || null,
+			friendsCount: friendsData?.friendsCount || null,
+			friendsScore: friendsData?.score || null,
 			finalScore,
 			availableMetrics
 		});
@@ -100,15 +100,15 @@ async function getPlayerData(steamID) {
 			createdScore
 		};
 	} catch (error) {
-		console.error('Error fetching player data:', error);
+		console.error('Error fetching player data.');
 		return null;
 	}
 }
 
-// Calculate a score based on account age (optional logic)
+// Calculate a score based on account age
 function calculateAccountAgeScore(timecreated) {
 	const accountAgeYears = (Date.now() / 1000 - timecreated) / (60 * 60 * 24 * 365);
-	return Math.max(5, Math.min(95, accountAgeYears * 10)); // Arbitrary scoring logic
+	return Math.max(5, Math.min(95, accountAgeYears * 10));
 }
 
 // Fetch owned games
@@ -126,7 +126,7 @@ async function getOwnedGames(steamID) {
 
 		return { totalGames, totalPlaytime, score };
 	} catch (error) {
-		console.error('Error fetching owned games:', error);
+		console.error('Error fetching owned games.');
 		return null;
 	}
 }
@@ -142,12 +142,12 @@ async function getFriendsList(steamID) {
 
 		return { friendsCount, score };
 	} catch (error) {
-		console.error('Error fetching friends list:', error);
+		console.error('Error fetching friends list.');
 		return null;
 	}
 }
 
-// Calculate final smurf score
+// Calculate final score
 function calculateFinalScore(scores) {
 	const validScores = scores.filter(score => score !== undefined);
 	if (validScores.length === 0) return 'Insufficient data';
