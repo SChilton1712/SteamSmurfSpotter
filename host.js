@@ -53,11 +53,11 @@ app.post('/api/steam-data', async (req, res) => {
 			personaname: playerData.personaname,
 			avatarmedium: playerData.avatarmedium,
 			creationDate: playerData.timecreated,
-			totalGames: gamesData?.totalGames || 0,
-			totalPlaytime: gamesData?.totalPlaytime || 0,
-			gamesScore: gamesData?.score || 0,
-			friendsCount: friendsData?.friendsCount || 0,
-			friendsScore: friendsData?.score || 0,
+			totalGames: gamesData?.totalGames || null,
+			totalPlaytime: gamesData?.totalPlaytime || null,
+			gamesScore: gamesData?.score || null,
+			friendsCount: friendsData?.friendsCount || null,
+			friendsScore: friendsData?.score || null,
 			finalScore,
 			availableMetrics
 		});
