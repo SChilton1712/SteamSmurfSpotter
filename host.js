@@ -29,8 +29,21 @@ app.post('/api/steam-data', async (req, res) => {
 
 		// Check if profile is public
 		if (playerData.communityvisibilitystate !== 3) {
-			return res.json({ error: 'This profile is private or friends-only.' });
-		}
+			return res.json({
+			  personaname: 'Private User',
+			  avatarmedium: 'default-avatar.png',
+			  creationDate: null,
+			  totalGames: null,
+			  totalPlaytime: null,
+			  gamesScore: null,
+			  friendsCount: null,
+			  friendsScore: null,
+			  finalScore: null,
+			  availableMetrics: 0
+			});
+		  }
+		  
+		  
 
 		// Fetch owned games and friends list in parallel
 		const [gamesData, friendsData] = await Promise.all([
